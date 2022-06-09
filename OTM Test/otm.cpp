@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -23,9 +24,13 @@ double Chi_Square(int N, int* v, double* pi){
 }
 
 
-double* calcPi(){    //#TODO
+double* calcPi(double eta, int K){    //#TODO
     return 0;
-    // return
+    int* pi = initArray(K+1);
+    for(int i = 0; i<=K; i++)
+    {
+        pi[i] = eta*exp(-2*eta)/pow(2,i);// * hipergeometric_func(i+1,2,eta);
+    }
 }
 
 
@@ -35,9 +40,9 @@ double calcPvalue(int N, double chi){    //#TODO
 }
 
 
-int* calcMatches(int m, int n, char* seq, int M, int N)
+int* calcMatches(int m, int n, char* seq, int M, int N, int K)
 {
-    int* v = initArray(6);
+    int* v = initArray(K+1);
     for(int i = 0; i < N; i++)
     {
         int counter = 0;
@@ -55,19 +60,19 @@ int* calcMatches(int m, int n, char* seq, int M, int N)
             if(matches)
                 counter++;
         }
-        v[5 ? counter>4 : counter] ++;
+        v[K ? counter > K-1 : counter] ++;
     }
     return v;
 }
 
 
-void OverlappingTemplateMatching(int m,  int n, char* seq, int M, int N){
-    int* v = calcMatches(m, n, seq, M, N);
+void OverlappingTemplateMatching(int m,  int n, char* seq, int M, int N, int K){
+    int* v = calcMatches(m, n, seq, M, N, K);
 
     double lambda = (M-m+1)/1<<m;
     double eta = lambda/2;
 
-    double* pi = calcPi();    //#TODO
+    double* pi = calcPi(eta, K);
     double chi = Chi_Square(N, v, pi);
     double Pvalue = calcPvalue(N, chi);
 
@@ -81,15 +86,15 @@ void OverlappingTemplateMatching(int m,  int n, char* seq, int M, int N){
 
 int main(int argc, char** argv){
 
-    cout << "Enter n, m, M, N.\n";
-    int n, m, M, N;
-    cin >> n >> m;
+    cout << "Enter n, m, M, N, K.\n";
+    int n, m, M, N, K;
+    cin >> n >> m >> M >> N >> K;
     
     cout << "Enter teh sequence.\n";
     char* seq = new char[n];
     cin >> seq;
 
-    OverlappingTemplateMatching(m, n, seq, M, N);
+    OverlappingTemplateMatching(m, n, seq, M, N, K);
 
     return 0;
 }
