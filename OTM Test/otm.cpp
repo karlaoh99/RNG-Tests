@@ -1,16 +1,26 @@
 #include <iostream>
 #include <cmath>
+#include <math.h>
 #include <bits/stdc++.h>
 
 using namespace std;
 
 
-int* initArray(int length){
+int* initIntArray(int length){
     int* v = new int[length];
     for(int i = 0; i<length; i++)
         v[i] = 0;
     
     return v;
+}
+
+
+double* initDoubleArray(int length){
+    double* pi = new double[length];
+    for(int i = 0; i<length; i++)
+        pi[i] = 0;
+    
+    return pi;
 }
 
 
@@ -24,25 +34,65 @@ double Chi_Square(int N, int* v, double* pi){
 }
 
 
-double* calcPi(double eta, int K){    //#TODO
-    return 0;
-    int* pi = initArray(K+1);
-    for(int i = 0; i<=K; i++)
+double factorial(int n)
+{
+    int result = 1;
+    for(int i = 1; i <= n; i++)
     {
-        pi[i] = eta*exp(-2*eta)/pow(2,i);// * hipergeometric_func(i+1,2,eta);
+        result*=i;
     }
+    return n;
 }
 
 
+double combinatory(int n, int k)
+{
+    if(k==0 || n == 0)
+        return 1;
+    return factorial(n)/(factorial(n-k)*factorial(k));
+}
+
+
+double combSum(int upper, int eta)
+{
+    double result = 0;
+    for(int l = 1; l<upper; l++)
+    {
+        result+=combinatory(upper-1, l-1)*(pow(eta, l)/factorial(l));
+    }
+    return result;
+}
+
+
+double* calcPi(double eta, int K){
+    double* pi = initDoubleArray(K+1);
+    for(int i = 0; i<=K; i++)
+    {
+        pi[i] = eta*exp(-2*eta)/(1<<i)*combSum(i, eta);
+    }
+    return pi;
+}
+
+double igamc(double a, double x)
+{
+    double norm = x/5000;
+    double upper, lower = 0;
+    for(double i = norm; i<x; i+=norm)
+    {
+        upper += norm*exp(-1*(i+1))*pow(i+1, a-1);
+        lower += norm*exp(-1*(i))*pow(i, a-1);
+    }
+    return 1-(abs(upper-lower));
+}
+
 double calcPvalue(int N, double chi){    //#TODO
-    return 0;
-    //return igamc_func(N/2, chi/2);
+    return igamc(N/2, chi/2);
 }
 
 
 int* calcMatches(int m, int n, char* seq, int M, int N, int K)
 {
-    int* v = initArray(K+1);
+    int* v = initIntArray(K+1);
     for(int i = 0; i < N; i++)
     {
         int counter = 0;
