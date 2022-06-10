@@ -5,7 +5,12 @@
 
 using namespace std;
 
-
+/**
+    Initialize an int array to 0.
+    
+    Parameters:
+        length: The length of the array.
+*/
 int* initIntArray(int length){
     int* v = new int[length];
     for(int i = 0; i<length; i++)
@@ -14,7 +19,12 @@ int* initIntArray(int length){
     return v;
 }
 
-
+/**
+    Initialize a double array to 0.
+    
+    Parameters:
+        length: The length of the array.
+*/
 double* initDoubleArray(int length){
     double* pi = new double[length];
     for(int i = 0; i<length; i++)
@@ -23,17 +33,33 @@ double* initDoubleArray(int length){
     return pi;
 }
 
+/**
+    Calculates the Chi-Square test.
+    
+    Parameters:
+        N : The number of independent blocks of n.
 
-double Chi_Square(int N, int* v, double* pi){
+        K : The number of degrees of freedom.
+
+        v: The ocurrence array.
+
+        pi: 
+*/
+double Chi_Square(int N, int K, int* v, double* pi){
     double result = 0;
-    for(int i = 0; i<5; i++){
+    for(int i = 0; i<=K; i++){
         double base = v[i] - N*pi[i];
         result += pow(base, 2)/pi[i];
     }
     return result/N;
 }
 
-
+/**
+    Initialize a double array to 0.
+    
+    Parameters:
+        length: The length of the array.
+*/
 double factorial(int n)
 {
     int result = 1;
@@ -44,7 +70,10 @@ double factorial(int n)
     return n;
 }
 
-
+/**
+    Calculates combinatories
+    
+*/
 double combinatory(int n, int k)
 {
     if(k==0 || n == 0)
@@ -52,7 +81,10 @@ double combinatory(int n, int k)
     return factorial(n)/(factorial(n-k)*factorial(k));
 }
 
-
+/**
+    Calculates a combinatory sum.
+    
+*/
 double combSum(int upper, int eta)
 {
     double result = 0;
@@ -64,6 +96,10 @@ double combSum(int upper, int eta)
 }
 
 
+/**
+    Calculates pi array.
+    
+*/
 double* calcPi(double eta, int K){
     double* pi = initDoubleArray(K+1);
     for(int i = 0; i<=K; i++)
@@ -73,6 +109,11 @@ double* calcPi(double eta, int K){
     return pi;
 }
 
+
+/**
+    Aproximates the 'Incoomplete Gamma Function' by Riemann's sums 
+    
+*/
 double igamc(double a, double x)
 {
     double norm = x/5000;
@@ -85,11 +126,26 @@ double igamc(double a, double x)
     return 1-(abs(upper-lower));
 }
 
+
+/**
+    Calculates the Chi-Square test.
+    
+    Parameters:
+
+        N : The number of independent blocks of n.
+
+        chi: The Chi-Square test value.
+
+*/
 double calcPvalue(int N, double chi){    //#TODO
     return igamc(N/2, chi/2);
 }
 
 
+/**
+    Calculate the number of occurrences of B in each of the N blocks.
+    
+*/
 int* calcMatches(int m, int n, char* seq, int M, int N, int K)
 {
     int* v = initIntArray(K+1);
@@ -115,7 +171,24 @@ int* calcMatches(int m, int n, char* seq, int M, int N, int K)
     return v;
 }
 
+/**
+    Calculates the Chi-Square test.
+    
+    Parameters:
 
+        m: The length in bits of the template.
+        
+        n: The length of the bit string.
+
+        seq: The string sequence of the binary number representation.
+
+        M : The length in bits of a substring of 'seq' to be tested
+
+        N : The number of independent blocks of n.
+
+        K : The number of degrees of freedom.
+
+*/
 void OverlappingTemplateMatching(int m,  int n, char* seq, int M, int N, int K){
     int* v = calcMatches(m, n, seq, M, N, K);
 
@@ -123,7 +196,7 @@ void OverlappingTemplateMatching(int m,  int n, char* seq, int M, int N, int K){
     double eta = lambda/2;
 
     double* pi = calcPi(eta, K);
-    double chi = Chi_Square(N, v, pi);
+    double chi = Chi_Square(N, K, v, pi);
     double Pvalue = calcPvalue(N, chi);
 
     if(Pvalue >= 0.01)
