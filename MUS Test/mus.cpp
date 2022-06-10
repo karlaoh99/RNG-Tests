@@ -5,7 +5,9 @@
 
 using namespace std;
 
-
+/**
+    Expected (precomputed) value of parameter L.
+*/
 int varianceL [11] = {
     2.954, 3.125, 3.238,
     3.311, 3.356, 3.384,
@@ -13,6 +15,10 @@ int varianceL [11] = {
     3.419, 3.421
 };
 
+
+/**
+    Variance (precomputed) value of parameter L.
+*/
 int expectedValueL [11] = {
     5.2177052, 6.1962507, 7.1836656,
     8.1764248, 9.1723243, 10.170032,
@@ -20,7 +26,16 @@ int expectedValueL [11] = {
     14.167488, 15.167379
 };
 
+/**
+    Computes a decimal value of a binary number representation.
+    
+    Parameters:
+        seq: The string sequence of the binary number representation.
 
+        init: The begining of the substring.
+
+        end: The end of the substring.
+*/
 int toDecimal(char* seq, int init, int end)
 {
     int result = 0;
@@ -32,7 +47,22 @@ int toDecimal(char* seq, int init, int end)
     return result;
 }
 
+/**
+    Builds the table of the blocks number last ocurrences of each L-bit in
+    decimal representation.
+    
+    Parameters:
+        seq: The string sequence of the binary number representation.
 
+        n: The length of the sequence.
+
+        Q : The number of blocks in the initialization sequence.
+
+        L : The length of each block.
+
+        accumSum: The distance between re-occurrences of the same L-bit block
+        in the Kblocks
+*/
 int* buildTable(char* seq, int n, int Q, int L, double* accumSum)
 {
     int* table = new int[1 << L];
@@ -55,6 +85,19 @@ int* buildTable(char* seq, int n, int Q, int L, double* accumSum)
 }
 
 
+/**
+    The Maurer's "Universal Statistical" Test.
+    
+    Parameters:
+        seq: The string sequence of the binary number representation.
+
+        n: The length of the sequence.
+
+        Q : The number of blocks in the initialization sequence.
+
+        L : The length of each block.
+
+*/
 void UniversalStatical(char* seq, int n, int Q, int L)
 {
     int K = n/L - Q;
