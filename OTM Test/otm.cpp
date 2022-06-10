@@ -123,7 +123,7 @@ double igamc(double a, double x)
         upper += norm*exp(-1*(i+1))*pow(i+1, a-1);
         lower += norm*exp(-1*(i))*pow(i, a-1);
     }
-    return 1-(abs(upper-lower));
+    return 1-(abs(upper-lower)/2);
 }
 
 
@@ -152,10 +152,10 @@ int* calcMatches(int m, int n, char* seq, int M, int N, int K)
     for(int i = 0; i < N; i++)
     {
         int counter = 0;
-        for(int j = i*M; j < (i+1)*M ; j++)
+        for(int j = i*M; j < (i+1)*M - m + 1 ; j++)
         {
             bool matches = true;
-            for(int k = 0; k < (M-m)+1; k++)
+            for(int k = 0; k < m; k++)
             {
                 if(!(int(seq[j+k] - '0') & 1))
                 {
@@ -166,7 +166,9 @@ int* calcMatches(int m, int n, char* seq, int M, int N, int K)
             if(matches)
                 counter++;
         }
-        v[K ? counter > K-1 : counter] ++;
+        // v[K ? counter > K-1 : counter] ++; //is this really necessary??
+        v[counter] ++;
+
     }
     return v;
 }
@@ -192,8 +194,8 @@ int* calcMatches(int m, int n, char* seq, int M, int N, int K)
 void OverlappingTemplateMatching(int m,  int n, char* seq, int M, int N, int K){
     int* v = calcMatches(m, n, seq, M, N, K);
 
-    double lambda = (M-m+1)/1<<m;
-    double eta = lambda/2;
+    double lambda = (M-m+1)/(double)(1<<m);
+    double eta = lambda/(double) 2;
 
     double* pi = calcPi(eta, K);
     double chi = Chi_Square(N, K, v, pi);
