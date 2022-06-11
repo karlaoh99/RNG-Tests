@@ -123,7 +123,7 @@ double igamc(double a, double x)
         upper += norm*exp(-1*(i+1))*pow(i+1, a-1);
         lower += norm*exp(-1*(i))*pow(i, a-1);
     }
-    return 1-(abs(upper-lower));
+    return 1-(abs(upper-lower)/2);
 }
 
 
@@ -137,7 +137,7 @@ double igamc(double a, double x)
         chi: The Chi-Square test value.
 
 */
-double calcPvalue(int N, double chi){    //#TODO
+double calcPvalue(int N, double chi){
     return igamc(N/2, chi/2);
 }
 
@@ -213,7 +213,7 @@ int main(int argc, char** argv){
     int n, m, M, N, K;
     cin >> n >> m >> M >> N >> K;
     
-    cout << "Enter teh sequence.\n";
+    cout << "Enter the sequence.\n";
     char* seq = new char[n];
     cin >> seq;
 
