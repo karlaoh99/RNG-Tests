@@ -49,9 +49,9 @@ double Chi_Square(int N, int K, int* v, double* pi){
     double result = 0;
     for(int i = 0; i<=K; i++){
         double base = v[i] - N*pi[i];
-        result += pow(base, 2)/pi[i];
+        result += pow(base, 2)/(double) pi[i];
     }
-    return result/N;
+    return result/(double) N;
 }
 
 /**
@@ -85,12 +85,12 @@ double combinatory(int n, int k)
     Calculates a combinatory sum.
     
 */
-double combSum(int upper, int eta)
+double combSum(int upper, double eta)
 {
     double result = 0;
     for(int l = 1; l<upper; l++)
     {
-        result+=combinatory(upper-1, l-1)*(pow(eta, l)/factorial(l));
+        result+=combinatory(upper-1, l-1)*(pow(eta, l)/(double) (factorial(l)));
     }
     return result;
 }
@@ -104,7 +104,7 @@ double* calcPi(double eta, int K){
     double* pi = initDoubleArray(K+1);
     for(int i = 0; i<=K; i++)
     {
-        pi[i] = eta*exp(-2*eta)/(1<<i)*combSum(i, eta);
+        pi[i] = eta*exp(-2*eta)/(double)((1<<i)*combSum(i, eta));
     }
     return pi;
 }
@@ -152,10 +152,10 @@ int* calcMatches(int m, int n, char* seq, int M, int N, int K)
     for(int i = 0; i < N; i++)
     {
         int counter = 0;
-        for(int j = i*M; j < (i+1)*M ; j++)
+        for(int j = i*M; j < (i+1)*M - m + 1 ; j++)
         {
             bool matches = true;
-            for(int k = 0; k < (M-m)+1; k++)
+            for(int k = 0; k < m; k++)
             {
                 if(!(int(seq[j+k] - '0') & 1))
                 {
@@ -166,7 +166,16 @@ int* calcMatches(int m, int n, char* seq, int M, int N, int K)
             if(matches)
                 counter++;
         }
-        v[K ? counter > K-1 : counter] ++;
+
+        if (counter > K-1)
+        {
+            v[K]++;
+        }
+        else
+        {
+            v[counter]++;
+        }
+
     }
     return v;
 }
@@ -192,10 +201,11 @@ int* calcMatches(int m, int n, char* seq, int M, int N, int K)
 void OverlappingTemplateMatching(int m,  int n, char* seq, int M, int N, int K){
     int* v = calcMatches(m, n, seq, M, N, K);
 
-    double lambda = (M-m+1)/1<<m;
-    double eta = lambda/2;
+    double lambda = (M-m+1)/(double)(1<<m);
+    double eta = lambda/(double) 2;
 
-    double* pi = calcPi(eta, K);
+    // double* pi = calcPi(eta, K);
+    double pi [6] = {0.364091,0.185659,0.139381,0.100571,0.0704323,0.139865 };
     double chi = Chi_Square(N, K, v, pi);
     double Pvalue = calcPvalue(N, chi);
 
